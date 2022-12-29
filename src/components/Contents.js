@@ -32,9 +32,15 @@ function Contents() {
 
     const [seatResult, setSeatResult] = useState([])
     let [loopCount, setLoopCount] = useState(0)
+    let [isFinish, setIsFinish] = useState(false)
     
-    let interval = 200
+    let interval = 50
     let action = null
+
+    // const init = () => {
+    //     setSeatResult([])
+    //     clearInterval(action)
+    // }
 
     const apply = () => {
         seatInterval()
@@ -42,15 +48,16 @@ function Contents() {
 
     const seatInterval = () => {
         clearInterval(action)
-        if (loopCount >= 50) {
-            interval = interval * 1.2
-        } else {
-            interval = interval * 0.2
+        if (loopCount >= 100) {
+            interval = interval + 50
         }
+        // setIntervalTime(interval)
         setLoopCount(loopCount++)
         setSeatResult(gatcha())
         if (interval < 1000) {
             action = setInterval(seatInterval, interval)
+        } else {
+            setIsFinish(true)
         }
     }
     
@@ -82,24 +89,36 @@ function Contents() {
                 
                 const innerNumber = seatNumber >= 37 ? seatNumber - 1 :  seatNumber
                 columnMap.push(
-                    <td className={(seatNumber === 37 ? 'hidden-seat' : '')}>
+                    <td className={(seatNumber === 37 ? 'hidden-seat' : '')} key={seatNumber}>
                         {innerNumber}
                         <p>{seatResult[arrIndex]}</p>
                     </td>
                 )
                 arrIndex++
             }
-            result.push(<tr>{columnMap}</tr>)
+            result.push(<tr key={i}>{columnMap}</tr>)
         }
         
         return result
     }
     return (
-        <div class="contents-body">
-            <button onClick={apply}>start</button>
-            <table>
-                {seatMap()}
-            </table>
+        <div className="contents-body">
+            <div>
+                {isFinish ?
+                    <p>배정 완료!</p> : null
+                }
+                {/* <button onClick={init}>initialize</button> */}
+                <button onClick={apply}>start</button>
+            </div>
+            <div>
+                <table>
+                    <tbody>
+                        {seatMap()}
+                    </tbody>
+                </table>
+            </div>
+                
+            
         </div>
     )
 }
