@@ -1,0 +1,13 @@
+.App {
+  text-align: center;
+}
+
+.contents-body td {
+  width: 100px;
+  height: 100px;
+  border: 1px solid black ;
+}
+
+.hidden-seat {
+  visibility: hidden;
+}
