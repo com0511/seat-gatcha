@@ -1,13 +1,19 @@
 import { useState } from "react"
 
 function Contents() {
-    const defaultNumber = 23
+    const maxSeatNumber = 27
+    const startSeatNumber = 23
     const column = 4
     const row = 7
 
+    // 고정좌석은 좌측 상단부터 0,1,2,3....의 위치 index를 가진다.
+    const fixedMember = [
+        {number: 3, name: 'qoo.hoony'}, 
+        {number: 7, name: '신규입사자'}
+    ]
+
     const members = [
         'vena.lee', 
-        'qoo.hoony', 
         'hue.jung', 
         'jay.doh', 
         'joshua.thedev', 
@@ -37,13 +43,25 @@ function Contents() {
     let interval = 50
     let action = null
 
-    // const init = () => {
-    //     setSeatResult([])
-    //     clearInterval(action)
-    // }
+    const init = () => {
+        interval = 50
+        action = null
+        setLoopCount(0)
+        setSeatResult([])
+        setIsFinish(false)
+    }
 
     const apply = () => {
+        init()
         seatInterval()
+    }
+
+    const suffleNumber = () => {
+        const numberArray = []
+        for(let i = 0; i < maxSeatNumber; i++) {
+            numberArray.push(i)
+        }
+        return numberArray.sort(() => Math.random() - 0.5)
     }
 
     const seatInterval = () => {
@@ -63,20 +81,28 @@ function Contents() {
     
     const gatcha = () => {
         const restoreMember = [];
-        members.forEach(item => {
-            const randomIndex = randomNum(27)
-            if (!restoreMember[randomIndex]) {
-                restoreMember[randomIndex] = item
+        suffleNumber().forEach((item, index) => {
+            const exsistFixed = validate(item)
+            if (exsistFixed) {
+                restoreMember[item] = exsistFixed.name
+            } else {
+                if (members[index]) {
+                    restoreMember[item] = members[index]
+                } else {
+                    restoreMember[item] = null
+                }
             }
             
         })
         return restoreMember
     }
 
-    
-    const randomNum = (max) => {
-        var randNum = Math.floor(Math.random()*(max-1)) + 1;
-        return randNum;
+    const validate = (item) => {
+        return fixedMember.filter(fixedItem => {
+            if (fixedItem.number === item) {
+                return item
+            }
+        })[0]
     }
 
     const seatMap = () => {
@@ -85,7 +111,7 @@ function Contents() {
         for (let i = 0; i < row; i++) {
             const columnMap = []
             for (let j = 0; j < column; j++) {
-                const seatNumber = defaultNumber+i+(j*row)
+                const seatNumber = startSeatNumber + i + (j*row)
                 
                 const innerNumber = seatNumber >= 37 ? seatNumber - 1 :  seatNumber
                 columnMap.push(
